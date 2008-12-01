@@ -25,10 +25,8 @@ require 'twitter_helpers'
 
 DEBUG = false
 DEFAULT_MAX_MSG_LENGTH = 140
-LOG_FILE_PATH = File.expand_path( File.dirname(__FILE__) ) + "/../messages.log"
-
-
-
+LOG_FILE_PATH = File.expand_path( File.dirname(__FILE__) + "/../../shared" ) + "/messages.log"
+  
 if DEBUG
   @logger = Logger.new(STDOUT)
 else
