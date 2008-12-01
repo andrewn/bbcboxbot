@@ -16,14 +16,23 @@ def get_latest_post_from_twitter(un, pw)
   end
 end
 
+def post_box_update(un, pw, msg)
+  if not DEBUG 
+    twit = Twitter::Base.new(un, pw)
+    twit.update(msg)
+  else
+    @logger.debug "DEBUG: #{msg}"
+  end
+end
+
 # Create a twitter message
 # with the given lat, lon, time
 # to the twitter account given.
 #
-def create_box_update(un, pw, opts)
+def create_box_update(opts)
   
   ok = check_options_exist_in_obj(opts, :lat, :lon, :time)  
-  
+    
   if opts[:msg_length].nil?
     max_msg_length = DEFAULT_MAX_MSG_LENGTH
   else
@@ -43,40 +52,45 @@ def create_box_update(un, pw, opts)
     relative_time   = convert_to_relative_time_string(time) + " ago"
     loc             = fetch_descriptive_location(lat,lon)
     
+    descriptive_location_with_country_name = nil
+        
     if loc[:place] and loc[:country]
+      @logger.info "Create message: using place and country"
       descriptive_location_with_country_name = "near #{loc[:place]}, #{loc[:country]}"
     end
     
     if loc[:place] and loc[:country_code]
+      @logger.info "Create message: using place and country code"
       descriptive_location_with_country_code = "near #{loc[:place]}, #{loc[:country_code]}"
+    end
+        
+    if descriptive_location_with_country_name.nil? and descriptive_location_with_country_code.nil?
+      @logger.info "Create message: using lat,lon"
+      descriptive_location_with_country_name = descriptive_location_with_country_code = "near coordinates #{lat},#{lon}"
     end
     
     msg_short   = "BBC Box spotted near #{machine_location} at #{machine_time}"
-    msg_medium  = "BBC Box spotted #{relative_time} #{descriptive_location_with_country_code} (#{machine_location} #{machine_time})"
-    msg_long    = "BBC Box spotted #{relative_time} #{descriptive_location_with_country_name} (#{machine_location} #{machine_time})"
+    msg_medium  = "BBC Box spotted #{descriptive_location_with_country_code} (#{machine_location} #{machine_time})"
+    msg_long    = "BBC Box spotted #{descriptive_location_with_country_name} (#{machine_location} #{machine_time})"
     
     msg = msg_long
     
-    # calculate how long message will be with full descriptove location
+    # Calculate how long message will be 
+    #  with full descriptive location
     if msg.length > max_msg_length
       msg = msg_medium
     end
     
     if msg.length > max_msg_length
       msg = msg_short
-    end    
+    end
     
     if msg.length > max_msg_length
       @logger.fatal "Shortest message is longer than #{max_msg_length}. Quitting"
       Kernel.exit
     end
-        
-    if not DEBUG 
-      twit = Twitter::Base.new(un, pw)
-      twit.update(msg)
-    else
-      @logger.debug "DEBUG: #{msg}"
-    end
+    
+    return msg
   end
 end
 

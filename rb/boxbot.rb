@@ -14,7 +14,7 @@
 
 # Add the absolute path of this directory to 
 # Ruby's search path to ensure require works 
-# correctly.
+#  correctly.
 # 
 $: << File.expand_path( File.dirname(__FILE__) )
 
@@ -23,9 +23,11 @@ require 'twitter'
 require 'twitter_helpers'
 #require 'rb/date_helper'
 
-DEBUG = true
+DEBUG = false
 DEFAULT_MAX_MSG_LENGTH = 140
 LOG_FILE_PATH = File.expand_path( File.dirname(__FILE__) ) + "/../messages.log"
+
+
 
 if DEBUG
   @logger = Logger.new(STDOUT)
@@ -71,13 +73,17 @@ end
 @logger.info "Box time: " + latest_box_update[:time].to_s
 @logger.info ""
 
+message = create_box_update({   :lat => latest_box_update[:lat], 
+                                :lon => latest_box_update[:lon],
+                                :time=> latest_box_update[:time]
+                            })
+                            
+@logger.info "Created message: " + message if DEBUG
+@logger.info ""
+
 # If latest box location is after latest twitter then 
 # post another one
 if latest_box_update[:time] > msg_parts[:time]
-  @logger.info "New Box location, should post to twitter"
-  create_box_update(username, password,
-                    {   :lat => latest_box_update[:lat], 
-                        :lon => latest_box_update[:lon],
-                        :time=> latest_box_update[:time]
-                    })
+  @logger.info "New Box location, should post to twitter"  
+  post_box_update(username, password, message) unless msg.empty?
 end
