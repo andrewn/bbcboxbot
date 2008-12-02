@@ -22,10 +22,10 @@ require 'rubygems'
 require 'twitter'
 require 'twitter_helpers'
 
-require 'pw'
+require File.expand_path( File.dirname(__FILE__) + "/../../" ) + "/shared/pw.rb"
 #require 'rb/date_helper'
 
-DEBUG = true
+DEBUG = false
 DEFAULT_MAX_MSG_LENGTH = 140
 log_file_path = File.expand_path( File.dirname(__FILE__) + "/../" ) + "/log/messages.log"
   
