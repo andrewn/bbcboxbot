@@ -27,7 +27,7 @@ require File.expand_path( File.dirname(__FILE__) + "/../../" ) + "/shared/pw.rb"
 
 DEBUG = false
 DEFAULT_MAX_MSG_LENGTH = 140
-log_file_path = File.expand_path( File.dirname(__FILE__) + "/../" ) + "/log/messages.log"
+log_file_path = File.expand_path( File.dirname(__FILE__) + "/../../" ) + "/shared/log/messages.log"
   
 if DEBUG
   @logger = Logger.new(STDOUT)

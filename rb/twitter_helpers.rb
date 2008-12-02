@@ -18,6 +18,9 @@ end
 
 def post_box_update(un, pw, msg)
   if not DEBUG 
+    @logger.log "LIVE: Post message to twitter (#{un})"
+    @logger.log msg
+    @logger.log 
     twit = Twitter::Base.new(un, pw)
     twit.update(msg)
   else
