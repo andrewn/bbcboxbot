@@ -21,23 +21,29 @@ $: << File.expand_path( File.dirname(__FILE__) )
 require 'rubygems'
 require 'twitter'
 require 'twitter_helpers'
+
+require 'pw'
 #require 'rb/date_helper'
 
-DEBUG = false
+DEBUG = true
 DEFAULT_MAX_MSG_LENGTH = 140
-LOG_FILE_PATH = File.expand_path( File.dirname(__FILE__) + "/../../shared" ) + "/messages.log"
+log_file_path = File.expand_path( File.dirname(__FILE__) + "/../" ) + "/log/messages.log"
   
 if DEBUG
   @logger = Logger.new(STDOUT)
 else
-  @logger = Logger.new(LOG_FILE_PATH, 'monthly')
+  @logger = Logger.new(log_file_path, 'monthly')
+end
+
+unless File.writable?(log_file_path)
+  log_file_path = "messages.log"
 end
 
 @logger.info "# Running " + Time.now.to_s 
 @logger.info "DEBUG #{DEBUG}"
 
 username              = "bbcbox"
-password              = "fmtjcsd"
+password              = PASSWORD
 current_box_feed_url  = "http://news.bbc.co.uk/nol/shared/bsp/hi/have_your_say/maps/5200/5277/data/current_leg.js"
 
 latest_twitter    = get_latest_post_from_twitter(username, password)
