@@ -91,6 +91,6 @@ message = create_box_update({   :lat => latest_box_update[:lat],
 if latest_box_update[:time] > msg_parts[:time]
   @logger.info "New Box location, should post to twitter (#{username})"  
   @logger.info "Posting message: " + message
-  @logger.info ""
+  @logger.info "--- Not posting as message is empty!" if message.empty?
   post_box_update(username, password, message) unless message.empty?
 end
