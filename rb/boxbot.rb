@@ -60,11 +60,12 @@ msg_parts = extract_box_data_from_message(latest_twitter.text) unless latest_twi
 
 if latest_twitter.nil? or msg_parts.nil?
   @logger.warn "There is no box update in twitter, creating"
-  create_box_update(username, password,
-                    {   :lat => latest_box_update[:lat], 
+  msg = create_box_update({   :lat => latest_box_update[:lat], 
                         :lon => latest_box_update[:lon],
                         :time=> latest_box_update[:time]
                     })
+                    
+  post_box_update( username, password, msg )
   Kernel.exit(0)
 end
 
@@ -82,12 +83,14 @@ message = create_box_update({   :lat => latest_box_update[:lat],
                                 :time=> latest_box_update[:time]
                             })
                             
-@logger.info "Created message: " + message if DEBUG
+@logger.info "Created message: " + message
 @logger.info ""
 
 # If latest box location is after latest twitter then 
 # post another one
 if latest_box_update[:time] > msg_parts[:time]
-  @logger.info "New Box location, should post to twitter"  
-  post_box_update(username, password, message) unless msg.empty?
+  @logger.info "New Box location, should post to twitter (#{username})"  
+  @logger.info "Posting message: " + message
+  @logger.info ""
+  post_box_update(username, password, message) unless message.empty?
 end
